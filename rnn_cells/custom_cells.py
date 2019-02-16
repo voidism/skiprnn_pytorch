@@ -3,8 +3,8 @@ import torch.nn.functional as F
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.nn.modules.rnn import RNNCellBase
-from torch.nn.parameter import Parameter
-from torch.nn.init import xavier_uniform
+from torch.nn import Parameter
+from torch.nn.init import xavier_uniform_ as xavier_uniform
 from .basic_rnn_cells import BasicLSTMCell, BasicGRUCell
 from .skip_rnn_cells import SkipLSTMCell, SkipGRUCell, MultiSkipLSTMCell, MultiSkipGRUCell
 import math
@@ -13,7 +13,7 @@ import numpy as np
 class CCellBase(RNNCellBase):
 
     def __init__(self, cell, learnable_elements, input_size, hidden_size, num_layers = 1,
-                    bias=True, batch_first = False, activation=F.tanh, layer_norm=False):
+                    bias=True, batch_first = False, activation=torch.tanh, layer_norm=False):
         super(CCellBase, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -148,7 +148,7 @@ class CCellBaseGRU(CCellBase):
 class CCellBaseSkipLSTM(CCellBase):
 
     def __init__(self, cell, learnable_elements, input_size, hidden_size, num_layers = 1,
-                    bias=True, batch_first = False, activation=F.tanh, layer_norm=False):
+                    bias=True, batch_first = False, activation=torch.tanh, layer_norm=False):
         super(CCellBaseSkipLSTM, self).__init__(cell, learnable_elements, input_size, hidden_size, num_layers,
                                                 bias, batch_first, activation, layer_norm)
         self.weight_uh = Parameter(xavier_uniform(torch.Tensor(1, hidden_size)))
@@ -227,7 +227,7 @@ class CCellBaseSkipLSTM(CCellBase):
 class CCellBaseSkipGRU(CCellBase):
 
     def __init__(self, cell, learnable_elements, input_size, hidden_size, num_layers = 1,
-                    bias=True, batch_first = False, activation=F.tanh, layer_norm=False):
+                    bias=True, batch_first = False, activation=torch.tanh, layer_norm=False):
         super(CCellBaseSkipGRU, self).__init__(cell, learnable_elements, input_size, hidden_size, num_layers,
                                                bias, batch_first, activation, layer_norm)
         self.weight_uh = Parameter(xavier_uniform(torch.Tensor(1, hidden_size)))

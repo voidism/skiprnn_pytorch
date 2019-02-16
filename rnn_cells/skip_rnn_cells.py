@@ -31,15 +31,15 @@ def SkipLSTMCell(input, hidden, num_layers, w_ih, w_hh, w_uh,b_ih=None, b_hh=Non
         cellgate = lst_layer_norm[0][2](cellgate.contiguous())
         outgate = lst_layer_norm[0][3](outgate.contiguous())
 
-    ingate = F.sigmoid(ingate)
-    forgetgate = F.sigmoid(forgetgate)
+    ingate = torch.sigmoid(ingate)
+    forgetgate = torch.sigmoid(forgetgate)
     cellgate = activation(cellgate)
-    outgate = F.sigmoid(outgate)
+    outgate = torch.sigmoid(outgate)
 
     new_c_tilde = (forgetgate * c_prev) + (ingate * cellgate)
     new_h_tilde = outgate * activation(new_c_tilde)
     # Compute value for the update prob
-    new_update_prob_tilde = F.sigmoid(F.linear(new_c_tilde, w_uh, b_uh))
+    new_update_prob_tilde = torch.sigmoid(F.linear(new_c_tilde, w_uh, b_uh))
     # Compute value for the update gate
     cum_update_prob = cum_update_prob_prev + torch.min(update_prob_prev, 1. - cum_update_prob_prev)
     # round
@@ -83,13 +83,13 @@ def SkipGRUCell(input, state, num_layers, w_ih, w_hh, w_uh,b_ih=None, b_hh=None,
         resetgate_tmp = lst_layer_norm[0][0](resetgate_tmp.contiguous())
         inputgate_tmp = lst_layer_norm[0][1](inputgate_tmp.contiguous())
 
-    resetgate = F.sigmoid(resetgate_tmp)
-    inputgate = F.sigmoid(inputgate_tmp)
+    resetgate = torch.sigmoid(resetgate_tmp)
+    inputgate = torch.sigmoid(inputgate_tmp)
     newgate = activation(i_n + resetgate * h_n)
     new_h_tilde = newgate + inputgate * (h_prev - newgate)
 
     # Compute value for the update prob
-    new_update_prob_tilde = F.sigmoid(F.linear(new_h_tilde, w_uh, b_uh))
+    new_update_prob_tilde = torch.sigmoid(F.linear(new_h_tilde, w_uh, b_uh))
     # Compute value for the update gate
     cum_update_prob = cum_update_prob_prev + torch.min(update_prob_prev, 1. - cum_update_prob_prev)
     # round
@@ -128,10 +128,10 @@ def MultiSkipLSTMCell(input, state, num_layers, w_ih, w_hh, w_uh,b_ih=None, b_hh
             cellgate = lst_layer_norm[idx][2](cellgate.contiguous())
             outgate = lst_layer_norm[idx][3](outgate.contiguous())
 
-        ingate = F.sigmoid(ingate)
-        forgetgate = F.sigmoid(forgetgate)
+        ingate = torch.sigmoid(ingate)
+        forgetgate = torch.sigmoid(forgetgate)
         cellgate = activation(cellgate)
-        outgate = F.sigmoid(outgate)
+        outgate = torch.sigmoid(outgate)
 
         new_c_tilde = (forgetgate * c_prev) + (ingate * cellgate)
         new_h_tilde = outgate * activation(new_c_tilde)
@@ -140,7 +140,7 @@ def MultiSkipLSTMCell(input, state, num_layers, w_ih, w_hh, w_uh,b_ih=None, b_hh
         cell_input = new_h_tilde
 
     # Compute value for the update prob
-    new_update_prob_tilde = F.sigmoid(F.linear(state_candidates[-1][0], w_uh, b_uh))
+    new_update_prob_tilde = torch.sigmoid(F.linear(state_candidates[-1][0], w_uh, b_uh))
 
     # Compute value for the update gate
     cum_update_prob = cum_update_prob_prev + torch.min(update_prob_prev, 1. - cum_update_prob_prev)
@@ -188,8 +188,8 @@ def MultiSkipGRUCell(input, state, num_layers, w_ih, w_hh, w_uh,b_ih=None, b_hh=
             resetgate_tmp = lst_layer_norm[idx][0](resetgate_tmp.contiguous())
             inputgate_tmp = lst_layer_norm[idx][1](inputgate_tmp.contiguous())
 
-        resetgate = F.sigmoid(resetgate_tmp)
-        inputgate = F.sigmoid(inputgate_tmp)
+        resetgate = torch.sigmoid(resetgate_tmp)
+        inputgate = torch.sigmoid(inputgate_tmp)
         newgate = activation(i_n + resetgate * h_n)
         new_h_tilde = newgate + inputgate * (h_prev - newgate)
 
@@ -197,7 +197,7 @@ def MultiSkipGRUCell(input, state, num_layers, w_ih, w_hh, w_uh,b_ih=None, b_hh=
         cell_input = new_h_tilde
 
     # Compute value for the update prob
-    new_update_prob_tilde = F.sigmoid(F.linear(state_candidates[-1], w_uh, b_uh))
+    new_update_prob_tilde = torch.sigmoid(F.linear(state_candidates[-1], w_uh, b_uh))
 
     # Compute value for the update gate
     cum_update_prob = cum_update_prob_prev + torch.min(update_prob_prev, 1. - cum_update_prob_prev)

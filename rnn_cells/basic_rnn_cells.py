@@ -24,10 +24,10 @@ def BasicLSTMCell(input, hidden, w_ih, w_hh, b_ih=None, b_hh=None,
         cellgate = lst_layer_norm[2](cellgate.contiguous())
         outgate = lst_layer_norm[3](outgate.contiguous())
 
-    ingate = F.sigmoid(ingate)
-    forgetgate = F.sigmoid(forgetgate)
+    ingate = torch.sigmoid(ingate)
+    forgetgate = torch.sigmoid(forgetgate)
     cellgate = activation(cellgate)
-    outgate = F.sigmoid(outgate)
+    outgate = torch.sigmoid(outgate)
 
     cy = (forgetgate * cx) + (ingate * cellgate)
     hy = outgate * activation(cy)
@@ -59,8 +59,8 @@ def BasicGRUCell(input, hidden, w_ih, w_hh, b_ih=None, b_hh=None,
         resetgate_tmp = lst_layer_norm[0](resetgate_tmp.contiguous())
         inputgate_tmp = lst_layer_norm[1](inputgate_tmp.contiguous())
 
-    resetgate = F.sigmoid(resetgate_tmp)
-    inputgate = F.sigmoid(inputgate_tmp)
+    resetgate = torch.sigmoid(resetgate_tmp)
+    inputgate = torch.sigmoid(inputgate_tmp)
     newgate = activation(i_n + resetgate * h_n)
     hy = newgate + inputgate * (hidden - newgate)
 
